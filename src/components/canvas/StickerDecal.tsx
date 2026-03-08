@@ -29,6 +29,8 @@ export default function StickerDecal({
 }: StickerDecalProps) {
   const sourceTexture = useTexture(url) as Texture;
   const select = useDesignStore((state) => state.select);
+  const boardRoughness = useDesignStore((state) => state.board.roughness);
+  const boardMetalness = useDesignStore((state) => state.board.metalness);
 
   const texture = useMemo(() => {
     const t = sourceTexture.clone();
@@ -74,8 +76,8 @@ export default function StickerDecal({
         opacity={opacity}
         emissive={selected ? "#7dd3fc" : "#000000"}
         emissiveIntensity={selected ? 0.45 : 0}
-        metalness={selected ? 0.18 : 0.08}
-        roughness={selected ? 0.35 : 0.5}
+        metalness={selected ? Math.max(boardMetalness, 0.18) : boardMetalness}
+        roughness={selected ? Math.min(boardRoughness, 0.35) : boardRoughness}
         polygonOffset
         polygonOffsetFactor={-1}
         depthTest

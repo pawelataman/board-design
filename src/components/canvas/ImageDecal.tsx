@@ -29,6 +29,8 @@ export default function ImageDecal({
 }: ImageDecalProps) {
   const texture = useTexture(url) as Texture;
   const select = useDesignStore((state) => state.select);
+  const boardRoughness = useDesignStore((state) => state.board.roughness);
+  const boardMetalness = useDesignStore((state) => state.board.metalness);
 
   // Preserve the native aspect ratio of the uploaded image
   const image = texture.image as HTMLImageElement | undefined;
@@ -76,6 +78,8 @@ export default function ImageDecal({
         opacity={opacity}
         emissive={selected ? "#7dd3fc" : "#000000"}
         emissiveIntensity={selected ? 0.22 : 0}
+        metalness={selected ? Math.max(boardMetalness, 0.18) : boardMetalness}
+        roughness={selected ? Math.min(boardRoughness, 0.35) : boardRoughness}
         polygonOffset
         polygonOffsetFactor={-1}
         depthTest

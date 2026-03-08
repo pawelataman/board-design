@@ -38,6 +38,8 @@ export default function TextDecal({
 }: TextDecalProps) {
   const gl = useThree((state) => state.gl);
   const select = useDesignStore((state) => state.select);
+  const boardRoughness = useDesignStore((state) => state.board.roughness);
+  const boardMetalness = useDesignStore((state) => state.board.metalness);
 
   const texture = useMemo(() => {
     const canvas = document.createElement("canvas");
@@ -48,6 +50,10 @@ export default function TextDecal({
     if (!ctx) return null;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Flip horizontally to counteract the parent group's 180° Z rotation
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
     ctx.font = FONT_MAP[fontFamily] ?? FONT_MAP.Syne;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -55,6 +61,7 @@ export default function TextDecal({
     ctx.shadowColor = "rgba(7,15,29,0.35)";
     ctx.shadowBlur = 20;
     ctx.fillText(text.slice(0, 24), canvas.width / 2, canvas.height / 2 + 8);
+    ctx.restore();
 
     const t = new CanvasTexture(canvas);
     t.colorSpace = SRGBColorSpace;
@@ -101,6 +108,8 @@ export default function TextDecal({
         opacity={1}
         emissive={selected ? "#7dd3fc" : "#000000"}
         emissiveIntensity={selected ? 0.3 : 0}
+        metalness={selected ? Math.max(boardMetalness, 0.18) : boardMetalness}
+        roughness={selected ? Math.min(boardRoughness, 0.35) : boardRoughness}
         polygonOffset
         polygonOffsetFactor={-1}
         depthTest
