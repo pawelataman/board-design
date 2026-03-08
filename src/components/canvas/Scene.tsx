@@ -46,12 +46,15 @@ export default function Scene() {
           color="#0f172a"
         />
 
-        <EffectComposer>
+        <EffectComposer multisampling={0}>
           <Bloom
             luminanceThreshold={0.72}
             luminanceSmoothing={0.18}
             intensity={0.28}
             mipmapBlur
+            levels={5}
+            resolutionX={256}
+            resolutionY={256}
           />
         </EffectComposer>
 
