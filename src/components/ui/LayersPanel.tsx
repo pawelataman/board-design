@@ -252,7 +252,7 @@ export default function LayersPanel() {
     .sort((a, b) => b.order - a.order);
 
   return (
-    <div className="panel w-full md:w-56 p-3 overflow-y-auto max-h-[50vh] md:max-h-[calc(100vh-7rem)]">
+    <div className="panel w-full md:w-72 p-3 overflow-y-auto max-h-[50vh] md:max-h-[calc(100vh-7rem)]">
       <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
         Layers — {activeSide}
       </h3>
