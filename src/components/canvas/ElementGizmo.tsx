@@ -60,22 +60,35 @@ export default function ElementGizmo({
     return m;
   }, [x, y, rotationZ, elementScale, isBack]);
 
+  const scaleAtDragStart = useRef(elementScale);
+
   const handleDragStart = useCallback(() => {
+    scaleAtDragStart.current = elementScale;
     if (controlsRef.current) {
       controlsRef.current.enabled = false;
     }
-  }, []);
+  }, [elementScale]);
 
   const handleDrag = useCallback(
     (local: Matrix4) => {
       local.decompose(_pos, _quat, _scale);
       _euler.setFromQuaternion(_quat);
 
+      // PivotControls scales non-uniformly on one axis at a time.
+      // Compare against the scale captured at drag start (stable reference)
+      // to detect which axis the user is dragging.
+      const base = scaleAtDragStart.current;
+      const sx = _scale.x;
+      const sy = _scale.y;
+      const diffX = Math.abs(sx - base);
+      const diffY = Math.abs(sy - base);
+      const newScale = diffX > diffY ? sx : sy;
+
       onTransform({
         x: MathUtils.clamp(_pos.x, -0.6, 0.6),
         y: MathUtils.clamp(_pos.y, -1.35, 1.35),
         rotation: _euler.z,
-        scale: Math.min(Math.max(_scale.x, _scale.y), scaleMax),
+        scale: Math.min(newScale, scaleMax),
       });
     },
     [onTransform, scaleMax],

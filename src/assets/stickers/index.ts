@@ -10,9 +10,9 @@ export interface StickerLibraryItem {
   category: StickerCategory;
 }
 
-const svg = (inner: string, bg = "#0f172a") =>
+const svg = (inner: string) =>
   `data:image/svg+xml;utf8,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240"><rect width="240" height="240" rx="48" fill="${bg}"/>${inner}</svg>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">${inner}</svg>`,
   )}`;
 
 export const STICKER_LIBRARY: StickerLibraryItem[] = [
