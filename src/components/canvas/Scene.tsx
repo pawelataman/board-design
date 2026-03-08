@@ -1,8 +1,48 @@
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useEffect } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
 import Board from "./Board";
 import { useDesignStore } from "../../store/useDesignStore";
+
+// ── Screenshot handler (runs inside the Canvas tree) ─────────────
+
+function ScreenshotHandler() {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+  const screenshotRequested = useDesignStore((s) => s.screenshotRequested);
+  const clearScreenshotRequest = useDesignStore((s) => s.clearScreenshotRequest);
+
+  useEffect(() => {
+    if (!screenshotRequested) return;
+
+    // Render one frame at 2x current pixel ratio for a sharp export
+    const currentPixelRatio = gl.getPixelRatio();
+    gl.setPixelRatio(currentPixelRatio * 2);
+    gl.render(scene, camera);
+
+    gl.domElement.toBlob((blob) => {
+      // Restore original pixel ratio
+      gl.setPixelRatio(currentPixelRatio);
+      clearScreenshotRequest();
+
+      if (!blob) return;
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `boardcraft-export-${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, "image/png");
+  }, [screenshotRequested, clearScreenshotRequest, gl, scene, camera]);
+
+  return null;
+}
+
+// ── Scene ────────────────────────────────────────────────────────
 
 export default function Scene() {
   const clearSelection = useDesignStore((s) => s.clearSelection);
@@ -10,6 +50,7 @@ export default function Scene() {
   return (
     <Canvas
       shadows
+      gl={{ preserveDrawingBuffer: true }}
       dpr={[1, 2]}
       camera={{ position: [0, 0, 4], fov: 45 }}
       onPointerMissed={() => clearSelection()}
@@ -46,6 +87,7 @@ export default function Scene() {
         />
 
         <OrbitControls enablePan minDistance={2} maxDistance={7} makeDefault />
+        <ScreenshotHandler />
       </Suspense>
     </Canvas>
   );

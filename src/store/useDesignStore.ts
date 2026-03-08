@@ -60,6 +60,9 @@ export interface DesignState {
   libraryTab: "stickers" | "images";
   mobilePanelTab: MobilePanelTab;
 
+  // Screenshot
+  screenshotRequested: boolean;
+
   // Board actions
   setBoard: (partial: Partial<BoardSettings>) => void;
   setActiveSide: (side: Side) => void;
@@ -88,6 +91,10 @@ export interface DesignState {
   openLibrary: (tab?: "stickers" | "images") => void;
   closeLibrary: () => void;
   setMobilePanelTab: (tab: MobilePanelTab) => void;
+
+  // Screenshot
+  requestScreenshot: () => void;
+  clearScreenshotRequest: () => void;
 
   // Persistence
   exportJSON: () => string;
@@ -214,6 +221,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   libraryOpen: false,
   libraryTab: "stickers",
   mobilePanelTab: null,
+  screenshotRequested: false,
 
   // ── Board ──
   setBoard: (partial) =>
@@ -343,6 +351,10 @@ export const useDesignStore = create<DesignState>((set, get) => ({
     set({ libraryOpen: true, libraryTab: tab ?? "stickers" }),
   closeLibrary: () => set({ libraryOpen: false }),
   setMobilePanelTab: (tab) => set({ mobilePanelTab: tab }),
+
+  // ── Screenshot ──
+  requestScreenshot: () => set({ screenshotRequested: true }),
+  clearScreenshotRequest: () => set({ screenshotRequested: false }),
 
   // ── Persistence ──
   exportJSON: () => JSON.stringify(serialize(get(), true), null, 2),

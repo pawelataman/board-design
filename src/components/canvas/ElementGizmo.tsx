@@ -3,6 +3,7 @@ import { useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Euler, MathUtils, Matrix4, Quaternion, Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { useDesignStore } from "../../store/useDesignStore";
 
 // Reusable temp objects to avoid allocations during drag
 const _pos = new Vector3();
@@ -34,6 +35,7 @@ export default function ElementGizmo({
   scaleMax = 3,
   onTransform,
 }: ElementGizmoProps) {
+  const screenshotRequested = useDesignStore((s) => s.screenshotRequested);
   const controls = useThree(
     (state) => state.controls as OrbitControlsImpl | undefined,
   );
@@ -104,6 +106,9 @@ export default function ElementGizmo({
       controlsRef.current.enabled = true;
     }
   }, []);
+
+  // Hide gizmos during screenshot capture
+  if (screenshotRequested) return null;
 
   return (
     <PivotControls
