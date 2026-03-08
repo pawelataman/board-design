@@ -7,6 +7,7 @@ import { useDesignStore } from "../../store/useDesignStore";
 interface ImageDecalProps {
   id: string;
   url: string;
+  side: "front" | "back";
   x: number;
   y: number;
   rotation: number;
@@ -19,6 +20,7 @@ interface ImageDecalProps {
 export default function ImageDecal({
   id,
   url,
+  side,
   x,
   y,
   rotation,
@@ -67,7 +69,7 @@ export default function ImageDecal({
   return (
     <Decal
       position={[x, y, 0.04]}
-      rotation={[0, 0, rotation]}
+      rotation={side === "back" ? [0, Math.PI, rotation] : [0, 0, rotation]}
       scale={decalScale}
       renderOrder={order}
       onPointerDown={handlePointerDown}

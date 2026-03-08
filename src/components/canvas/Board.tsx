@@ -78,7 +78,7 @@ export default function Board() {
   // Only show gizmos when the active side matches what the camera is actually seeing
   const showGizmos = cameraFacing === activeSide;
 
-  const renderDecal = (el: (typeof elements)[0], isSelected: boolean) => {
+  const renderDecal = (el: (typeof elements)[0], isSelected: boolean, side: "front" | "back") => {
     const t = el.transform;
     switch (el.kind) {
       case "sticker":
@@ -87,6 +87,7 @@ export default function Board() {
             key={el.id}
             id={el.id}
             url={el.url!}
+            side={side}
             x={t.x}
             y={t.y}
             rotation={t.rotation}
@@ -104,6 +105,7 @@ export default function Board() {
             text={el.text ?? "Text"}
             fontFamily={el.fontFamily ?? "Syne"}
             color={el.color ?? "#ffffff"}
+            side={side}
             x={t.x}
             y={t.y}
             rotation={t.rotation}
@@ -118,6 +120,7 @@ export default function Board() {
             key={el.id}
             id={el.id}
             url={el.url!}
+            side={side}
             x={t.x}
             y={t.y}
             rotation={t.rotation}
@@ -157,7 +160,7 @@ export default function Board() {
   };
 
   return (
-    <group rotation={[0, 0, Math.PI]}>
+    <group>
       <group ref={boardGroupRef} dispose={null}>
         {/* Edge */}
         <mesh castShadow receiveShadow geometry={nodes.Edge.geometry} renderOrder={0}>
@@ -177,7 +180,7 @@ export default function Board() {
             metalness={boardMetalness}
             envMapIntensity={1.25}
           />
-          {frontElements.map((el) => renderDecal(el, el.id === selectedId))}
+          {frontElements.map((el) => renderDecal(el, el.id === selectedId, "front"))}
         </mesh>
 
         {/* Front gizmos — only when front is active AND camera faces front */}
@@ -192,7 +195,7 @@ export default function Board() {
             metalness={boardMetalness}
             envMapIntensity={1.25}
           />
-          {backElements.map((el) => renderDecal(el, el.id === selectedId))}
+          {backElements.map((el) => renderDecal(el, el.id === selectedId, "back"))}
         </mesh>
 
         {/* Back gizmos — only when back is active AND camera faces back */}

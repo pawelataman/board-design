@@ -16,6 +16,7 @@ interface TextDecalProps {
   text: string;
   fontFamily: string;
   color: string;
+  side: "front" | "back";
   x: number;
   y: number;
   rotation: number;
@@ -29,6 +30,7 @@ export default function TextDecal({
   text,
   fontFamily,
   color,
+  side,
   x,
   y,
   rotation,
@@ -50,10 +52,6 @@ export default function TextDecal({
     if (!ctx) return null;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Flip horizontally to counteract the parent group's 180° Z rotation
-    ctx.save();
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
     ctx.font = FONT_MAP[fontFamily] ?? FONT_MAP.Syne;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -61,7 +59,6 @@ export default function TextDecal({
     ctx.shadowColor = "rgba(7,15,29,0.35)";
     ctx.shadowBlur = 20;
     ctx.fillText(text.slice(0, 24), canvas.width / 2, canvas.height / 2 + 8);
-    ctx.restore();
 
     const t = new CanvasTexture(canvas);
     t.colorSpace = SRGBColorSpace;
@@ -97,7 +94,7 @@ export default function TextDecal({
   return (
     <Decal
       position={[x, y, 0.04]}
-      rotation={[0, 0, rotation]}
+      rotation={side === "back" ? [0, Math.PI, rotation] : [0, 0, rotation]}
       scale={[scale * 3.1, scale * 1.15, 0.18]}
       renderOrder={order}
       onPointerDown={handlePointerDown}

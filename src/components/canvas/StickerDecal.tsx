@@ -7,6 +7,7 @@ import { useDesignStore } from "../../store/useDesignStore";
 interface StickerDecalProps {
   id: string;
   url: string;
+  side: "front" | "back";
   x: number;
   y: number;
   rotation: number;
@@ -19,6 +20,7 @@ interface StickerDecalProps {
 export default function StickerDecal({
   id,
   url,
+  side,
   x,
   y,
   rotation,
@@ -49,7 +51,10 @@ export default function StickerDecal({
     const topDecal = event.intersections.reduce<Object3D | null>(
       (best, hit) => {
         const obj = hit.eventObject;
-        if (obj.renderOrder > 0 && (!best || obj.renderOrder > best.renderOrder))
+        if (
+          obj.renderOrder > 0 &&
+          (!best || obj.renderOrder > best.renderOrder)
+        )
           return obj;
         return best;
       },
@@ -65,7 +70,7 @@ export default function StickerDecal({
   return (
     <Decal
       position={[x, y, 0.04]}
-      rotation={[0, 0, rotation]}
+      rotation={side === "back" ? [0, Math.PI, rotation] : [0, 0, rotation]}
       scale={[scale, scale, 0.24]}
       renderOrder={order}
       onPointerDown={handleClick}
