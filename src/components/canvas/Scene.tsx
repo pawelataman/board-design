@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
-import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import Board from "./Board";
 import { useDesignStore } from "../../store/useDesignStore";
 
@@ -45,18 +44,6 @@ export default function Scene() {
           opacity={0.48}
           color="#0f172a"
         />
-
-        <EffectComposer multisampling={0}>
-          <Bloom
-            luminanceThreshold={0.72}
-            luminanceSmoothing={0.18}
-            intensity={0.28}
-            mipmapBlur
-            levels={5}
-            resolutionX={256}
-            resolutionY={256}
-          />
-        </EffectComposer>
 
         <OrbitControls enablePan minDistance={2} maxDistance={7} makeDefault />
       </Suspense>
