@@ -148,22 +148,29 @@ function ElementProperties({ element }: { element: DesignElement }) {
             className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-1 text-sm outline-none focus:border-[var(--border-active)]"
           />
         </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-xs text-[var(--text-secondary)]">Scale</span>
-          <input
-            type="number"
-            step={0.01}
-            min={0}
-            value={t.scale}
-            onChange={(e) =>
-              update({
-                transform: { ...t, scale: parseFloat(e.target.value) || 0.1 },
-              })
-            }
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-1 text-sm outline-none focus:border-[var(--border-active)]"
-          />
-        </label>
       </div>
+
+      {/* Scale slider */}
+      <label className="flex flex-col gap-1.5">
+        <div className="flex justify-between text-sm">
+          <span>Scale</span>
+          <span className="text-[var(--text-secondary)]">
+            {t.scale.toFixed(2)}
+          </span>
+        </div>
+        <input
+          type="range"
+          min={0.02}
+          max={3}
+          step={0.01}
+          value={t.scale}
+          onChange={(e) =>
+            update({
+              transform: { ...t, scale: parseFloat(e.target.value) },
+            })
+          }
+        />
+      </label>
 
       {/* Opacity (stickers and images) */}
       {(element.kind === "sticker" || element.kind === "image") && (
@@ -268,7 +275,7 @@ export default function PropertiesPanel() {
     : undefined;
 
   return (
-    <div className="panel w-72 p-4 overflow-y-auto max-h-[calc(100vh-7rem)]">
+    <div className="panel w-full md:w-72 p-4 overflow-y-auto max-h-[50vh] md:max-h-[calc(100vh-7rem)]">
       {selected ? (
         <ElementProperties element={selected} />
       ) : (

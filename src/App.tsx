@@ -4,9 +4,12 @@ import Toolbar from "./components/ui/Toolbar";
 import LayersPanel from "./components/ui/LayersPanel";
 import PropertiesPanel from "./components/ui/PropertiesPanel";
 import LibraryPopover from "./components/ui/LibraryPopover";
+import MobileTabBar from "./components/ui/MobileTabBar";
 import { decodeSharedDesign, useDesignStore } from "./store/useDesignStore";
 
 export default function App() {
+  const mobilePanelTab = useDesignStore((s) => s.mobilePanelTab);
+
   // Load persisted design on mount (shared URL takes priority)
   useEffect(() => {
     const designParam = new URLSearchParams(window.location.search).get(
@@ -58,14 +61,25 @@ export default function App() {
           <Toolbar />
         </div>
 
-        {/* Left — layers panel */}
-        <div className="pointer-events-auto absolute left-4 top-20 bottom-4">
+        {/* Desktop: side-by-side panels (hidden on mobile) */}
+        <div className="pointer-events-auto absolute left-4 top-20 bottom-4 hidden md:block">
           <LayersPanel />
         </div>
-
-        {/* Right — properties panel */}
-        <div className="pointer-events-auto absolute right-4 top-20 bottom-4">
+        <div className="pointer-events-auto absolute right-4 top-20 bottom-4 hidden md:block">
           <PropertiesPanel />
+        </div>
+
+        {/* Mobile: bottom sheet panel (visible only on small screens when a tab is active) */}
+        {mobilePanelTab && (
+          <div className="pointer-events-auto absolute inset-x-0 bottom-14 max-h-[50vh] overflow-y-auto px-3 md:hidden">
+            {mobilePanelTab === "layers" && <LayersPanel />}
+            {mobilePanelTab === "properties" && <PropertiesPanel />}
+          </div>
+        )}
+
+        {/* Mobile: bottom tab bar (visible only on small screens) */}
+        <div className="pointer-events-auto absolute inset-x-0 bottom-0 md:hidden">
+          <MobileTabBar />
         </div>
 
         {/* Library popover (stickers / image upload) */}

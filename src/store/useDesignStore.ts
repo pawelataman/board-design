@@ -41,6 +41,8 @@ export interface BoardSettings {
 
 export type Tool = "select" | "hand";
 
+export type MobilePanelTab = "layers" | "properties" | null;
+
 export interface DesignState {
   // Board
   board: BoardSettings;
@@ -56,6 +58,7 @@ export interface DesignState {
   propertiesPanelOpen: boolean;
   libraryOpen: boolean;
   libraryTab: "stickers" | "images";
+  mobilePanelTab: MobilePanelTab;
 
   // Board actions
   setBoard: (partial: Partial<BoardSettings>) => void;
@@ -84,6 +87,7 @@ export interface DesignState {
   togglePropertiesPanel: () => void;
   openLibrary: (tab?: "stickers" | "images") => void;
   closeLibrary: () => void;
+  setMobilePanelTab: (tab: MobilePanelTab) => void;
 
   // Persistence
   exportJSON: () => string;
@@ -209,6 +213,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   propertiesPanelOpen: true,
   libraryOpen: false,
   libraryTab: "stickers",
+  mobilePanelTab: null,
 
   // ── Board ──
   setBoard: (partial) =>
@@ -337,6 +342,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   openLibrary: (tab) =>
     set({ libraryOpen: true, libraryTab: tab ?? "stickers" }),
   closeLibrary: () => set({ libraryOpen: false }),
+  setMobilePanelTab: (tab) => set({ mobilePanelTab: tab }),
 
   // ── Persistence ──
   exportJSON: () => JSON.stringify(serialize(get(), true), null, 2),

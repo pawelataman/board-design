@@ -34,6 +34,10 @@ body,
   margin: 0;
   min-height: 100%;
   width: 100%;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 body {
@@ -96,6 +100,16 @@ canvas {
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* ── Mobile bottom tab bar ────────────────────────────────────── */
+
+.mobile-tab-bar {
+  background: rgba(17, 24, 39, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* ── Utility ──────────────────────────────────────────────────── */

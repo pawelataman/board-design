@@ -14,7 +14,7 @@ export default function Scene() {
       dpr={[1, 2]}
       camera={{ position: [0, 0, 4], fov: 45 }}
       onPointerMissed={() => clearSelection()}
-      style={{ position: "absolute", inset: 0 }}
+      style={{ position: "absolute", inset: 0, touchAction: "none" }}
     >
       <Suspense fallback={null}>
         <ambientLight intensity={0.8} />

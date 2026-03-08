@@ -171,7 +171,7 @@ export default function LibraryPopover() {
       <div className="fixed inset-0 z-40" onClick={closeLibrary} />
 
       {/* Panel */}
-      <div className="panel absolute left-1/2 top-16 z-50 w-[360px] -translate-x-1/2 p-4">
+      <div className="panel absolute left-1/2 top-16 z-50 w-[calc(100vw-2rem)] max-w-[360px] -translate-x-1/2 p-4">
         {/* Tabs */}
         <div className="mb-3 flex items-center gap-2 border-b border-[var(--border)] pb-2">
           <button

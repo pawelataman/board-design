@@ -125,14 +125,14 @@ export default function Toolbar() {
   ];
 
   return (
-    <div className="toolbar-pill flex items-center gap-1 px-2 py-1.5">
+    <div className="toolbar-pill flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-1.5">
       {tools.map((t) => (
         <button
           key={t.id}
           type="button"
           onClick={t.action}
           title={t.label}
-          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 rounded-full px-2 sm:px-3 py-1.5 text-xs font-medium transition-colors ${
             t.active
               ? "bg-white/12 text-[var(--accent)]"
               : "text-[var(--text-secondary)] hover:bg-white/8 hover:text-[var(--text-primary)]"
@@ -149,7 +149,7 @@ export default function Toolbar() {
         type="button"
         onClick={flipSide}
         title={`Flip to ${activeSide === "front" ? "back" : "front"}`}
-        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/8 hover:text-[var(--text-primary)]"
+        className="flex items-center gap-1.5 rounded-full px-2 sm:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/8 hover:text-[var(--text-primary)]"
       >
         <FlipIcon />
         <span className="hidden sm:inline">
@@ -163,7 +163,7 @@ export default function Toolbar() {
         type="button"
         onClick={handleShare}
         title="Copy share URL"
-        className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/8 hover:text-[var(--text-primary)]"
+        className="flex items-center gap-1.5 rounded-full px-2 sm:px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/8 hover:text-[var(--text-primary)]"
       >
         <ShareIcon />
         <span className="hidden sm:inline">Share</span>

@@ -44,17 +44,18 @@ export default function ElementGizmo({
   }, [controls]);
 
   // Build matrix: position + rotation + scale (baked so handles reflect actual size)
-  // On the back side, the board is rotated 180° around Y, which mirrors X and Z.
-  // PivotControls operates in the parent's local space, so we pass coordinates
-  // through directly for both sides — no negation needed. Only Z depth differs.
+  // On the back side, the decal uses rotation=[0, Math.PI, rotation] which mirrors
+  // the Z-rotation axis. We negate rotationZ in the gizmo matrix so the gizmo handle
+  // visually matches the decal orientation, and negate the extracted euler.z on output.
   const isBack = side === "back";
   const depthOffset = 0.04;
   const matrix = useMemo(() => {
     const m = new Matrix4();
     const zPos = isBack ? -(0.04 + depthOffset) : 0.04 + depthOffset;
+    const effectiveRotZ = isBack ? -rotationZ : rotationZ;
     m.compose(
       new Vector3(x, y, zPos),
-      new Quaternion().setFromEuler(new Euler(0, 0, rotationZ)),
+      new Quaternion().setFromEuler(new Euler(0, 0, effectiveRotZ)),
       new Vector3(elementScale, elementScale, elementScale),
     );
     return m;
@@ -84,14 +85,18 @@ export default function ElementGizmo({
       const diffY = Math.abs(sy - base);
       const newScale = diffX > diffY ? sx : sy;
 
+      // On the back side, the decal's [0, Math.PI, rotation] mirrors the Z-axis,
+      // so we negate the gizmo's euler.z to get the correct store rotation value.
+      const extractedRotation = isBack ? -_euler.z : _euler.z;
+
       onTransform({
         x: MathUtils.clamp(_pos.x, -0.6, 0.6),
         y: MathUtils.clamp(_pos.y, -1.35, 1.35),
-        rotation: _euler.z,
+        rotation: extractedRotation,
         scale: Math.min(newScale, scaleMax),
       });
     },
-    [onTransform, scaleMax],
+    [onTransform, scaleMax, isBack],
   );
 
   const handleDragEnd = useCallback(() => {
