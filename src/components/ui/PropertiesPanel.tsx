@@ -1,7 +1,5 @@
 import { useDesignStore, type DesignElement } from "../../store/useDesignStore";
 
-// ── Board properties (shown when nothing is selected) ────────────
-
 function BoardProperties() {
   const boardColor = useDesignStore((s) => s.board.color);
   const boardRoughness = useDesignStore((s) => s.board.roughness);
@@ -117,7 +115,9 @@ function ElementProperties({ element }: { element: DesignElement }) {
             step={0.01}
             value={t.x}
             onChange={(e) =>
-              update({ transform: { ...t, x: parseFloat(e.target.value) || 0 } })
+              update({
+                transform: { ...t, x: parseFloat(e.target.value) || 0 },
+              })
             }
             className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-1 text-sm outline-none focus:border-[var(--border-active)]"
           />
@@ -129,7 +129,9 @@ function ElementProperties({ element }: { element: DesignElement }) {
             step={0.01}
             value={t.y}
             onChange={(e) =>
-              update({ transform: { ...t, y: parseFloat(e.target.value) || 0 } })
+              update({
+                transform: { ...t, y: parseFloat(e.target.value) || 0 },
+              })
             }
             className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-1 text-sm outline-none focus:border-[var(--border-active)]"
           />
@@ -187,9 +189,7 @@ function ElementProperties({ element }: { element: DesignElement }) {
             max={1}
             step={0.01}
             value={element.opacity ?? 1}
-            onChange={(e) =>
-              update({ opacity: parseFloat(e.target.value) })
-            }
+            onChange={(e) => update({ opacity: parseFloat(e.target.value) })}
           />
         </label>
       )}
