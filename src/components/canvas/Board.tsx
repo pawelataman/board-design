@@ -14,7 +14,7 @@ type GLTFResult = GLTF & {
   nodes: { Edge: Mesh; Front: Mesh; Back: Mesh };
 };
 
-const BOARD_MODEL_URL = "/models/snowboard.glb";
+const BOARD_MODEL_URL = `${import.meta.env.BASE_URL}models/snowboard.glb`;
 
 export default function Board() {
   const { nodes } = useGLTF(BOARD_MODEL_URL) as unknown as GLTFResult;
