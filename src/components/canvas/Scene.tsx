@@ -55,12 +55,7 @@ export default function Scene() {
           />
         </EffectComposer>
 
-        <OrbitControls
-          enablePan
-          minDistance={2}
-          maxDistance={7}
-          makeDefault
-        />
+        <OrbitControls enablePan minDistance={2} maxDistance={7} makeDefault />
       </Suspense>
     </Canvas>
   );
