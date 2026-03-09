@@ -55,6 +55,7 @@ function ScreenshotHandler() {
     const rtBack = new WebGLRenderTarget(EXPORT_W, EXPORT_H);
 
     // Configure camera for the export aspect ratio
+    // eslint-disable-next-line react-hooks/immutability
     camera.aspect = EXPORT_W / EXPORT_H;
     camera.fov = 45;
     camera.updateProjectionMatrix();
@@ -199,15 +200,27 @@ function ScreenshotHandler() {
     // Draw cropped front panel
     ctx.drawImage(
       frontCanvas,
-      frontBounds.x, cropTop, frontCropW, cropH, // source rect
-      PADDING, PADDING, frontCropW, cropH,        // dest rect
+      frontBounds.x,
+      cropTop,
+      frontCropW,
+      cropH, // source rect
+      PADDING,
+      PADDING,
+      frontCropW,
+      cropH, // dest rect
     );
 
     // Draw cropped back panel
     ctx.drawImage(
       backCanvas,
-      backBounds.x, cropTop, backCropW, cropH,                    // source rect
-      PADDING + frontCropW + GAP, PADDING, backCropW, cropH,      // dest rect
+      backBounds.x,
+      cropTop,
+      backCropW,
+      cropH, // source rect
+      PADDING + frontCropW + GAP,
+      PADDING,
+      backCropW,
+      cropH, // dest rect
     );
 
     // ── 8. Download ──
