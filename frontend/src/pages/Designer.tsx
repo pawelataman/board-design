@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import Scene from "../components/canvas/Scene";
 import Toolbar from "../components/ui/Toolbar";
 import LayersPanel from "../components/ui/LayersPanel";
@@ -6,9 +7,20 @@ import PropertiesPanel from "../components/ui/PropertiesPanel";
 import LibraryPopover from "../components/ui/LibraryPopover";
 import MobileTabBar from "../components/ui/MobileTabBar";
 import { decodeSharedDesign, useDesignStore } from "../store/useDesignStore";
+import { useBoard, useUpdateBoard } from "../api/boards";
 
 export default function Designer() {
+  const [searchParams] = useSearchParams();
+  const boardId = searchParams.get("boardId");
+
   const mobilePanelTab = useDesignStore((s) => s.mobilePanelTab);
+  const storeBoardId = useDesignStore((s) => s.boardId);
+
+  const { data: apiBoard, isLoading, isError } = useBoard(boardId ?? "");
+  const updateBoardMutation = useUpdateBoard();
+
+  // Track whether we've already hydrated from the API to avoid re-hydrating
+  const hydratedRef = useRef<string | null>(null);
 
   // Lock scrolling & touch on body while designer is active
   useEffect(() => {
@@ -16,11 +28,22 @@ export default function Designer() {
     return () => document.body.classList.remove("designer-active");
   }, []);
 
-  // Load persisted design on mount (shared URL takes priority)
+  // ── Hydrate store from API board (when boardId is in URL) ──
   useEffect(() => {
-    const designParam = new URLSearchParams(window.location.search).get(
-      "design",
-    );
+    if (!boardId) return;
+    if (!apiBoard) return;
+    // Only hydrate once per boardId (avoid overwriting user edits on refetch)
+    if (hydratedRef.current === boardId) return;
+
+    hydratedRef.current = boardId;
+    useDesignStore.getState().loadFromApiBoard(apiBoard);
+  }, [boardId, apiBoard]);
+
+  // ── Fallback: load from shared URL or localStorage (no boardId) ──
+  useEffect(() => {
+    if (boardId) return; // skip if we're loading from API
+
+    const designParam = searchParams.get("design");
 
     if (designParam) {
       try {
@@ -33,24 +56,79 @@ export default function Designer() {
     }
 
     useDesignStore.getState().loadFromLocal();
-  }, []);
+  }, [boardId, searchParams]);
 
-  // Auto-save to localStorage (debounced 1s)
+  // ── Auto-save callback ──
+  const saveToApi = useCallback(() => {
+    const state = useDesignStore.getState();
+    if (!state.boardId) return;
+    const payload = state.getUpdatePayload();
+    updateBoardMutation.mutate({ id: state.boardId, payload });
+  }, [updateBoardMutation]);
+
+  // // ── Auto-save: debounced subscription to store changes ──
+  // useEffect(() => {
+  //   let timeoutId = 0;
+
+  //   const unsubscribe = useDesignStore.subscribe(() => {
+  //     window.clearTimeout(timeoutId);
+  //     timeoutId = window.setTimeout(() => {
+  //       const state = useDesignStore.getState();
+  //       if (state.boardId) {
+  //         // Board is API-persisted → save to API
+  //         saveToApi();
+  //       } else {
+  //         // Scratch design → save to localStorage
+  //         state.saveToLocal();
+  //       }
+  //     }, 1_000);
+  //   });
+
+  //   return () => {
+  //     window.clearTimeout(timeoutId);
+  //     unsubscribe();
+  //   };
+  // }, [saveToApi]);
+
+  // ── Reset store when leaving the designer ──
   useEffect(() => {
-    let timeoutId = 0;
-
-    const unsubscribe = useDesignStore.subscribe(() => {
-      window.clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(() => {
-        useDesignStore.getState().saveToLocal();
-      }, 1000);
-    });
-
     return () => {
-      window.clearTimeout(timeoutId);
-      unsubscribe();
+      useDesignStore.getState().resetDesign();
     };
   }, []);
+
+  // ── Loading / error states for API boards ──
+  if (boardId && isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#04070d] text-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-sky-400" />
+          <p className="text-sm text-white/60">Loading board...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (boardId && isError) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#04070d] text-white">
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-lg font-semibold text-red-400">
+            Failed to load board
+          </p>
+          <p className="text-sm text-white/60">
+            The board may have been deleted or the server is unavailable.
+          </p>
+          <a
+            href="/boards"
+            className="mt-2 rounded-lg bg-white/10 px-4 py-2 text-sm transition hover:bg-white/20"
+          >
+            Back to boards
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[radial-gradient(circle_at_top,#123047_0%,#081321_42%,#04070d_100%)] text-white">
@@ -59,6 +137,15 @@ export default function Designer() {
 
       {/* Full-bleed 3D canvas */}
       <Scene />
+
+      {/* Board name indicator (when editing an API board) */}
+      {storeBoardId && (
+        <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 px-3 py-1">
+          <span className="text-xs text-white/40">
+            {useDesignStore.getState().boardName ?? "Untitled"}
+          </span>
+        </div>
+      )}
 
       {/* Floating UI panels */}
       <div className="pointer-events-none absolute inset-0 z-10">

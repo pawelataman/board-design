@@ -9,6 +9,7 @@ import TextDecal from "./TextDecal";
 import ImageDecal from "./ImageDecal";
 import ElementGizmo from "./ElementGizmo";
 import { useDesignStore } from "../../store/useDesignStore";
+import { Suspense } from "react";
 
 type GLTFResult = GLTF & {
   nodes: { Edge: Mesh; Front: Mesh; Back: Mesh };
@@ -78,7 +79,11 @@ export default function Board() {
   // Only show gizmos when the active side matches what the camera is actually seeing
   const showGizmos = cameraFacing === activeSide;
 
-  const renderDecal = (el: (typeof elements)[0], isSelected: boolean, side: "front" | "back") => {
+  const renderDecal = (
+    el: (typeof elements)[0],
+    isSelected: boolean,
+    side: "front" | "back",
+  ) => {
     const t = el.transform;
     switch (el.kind) {
       case "sticker":
@@ -163,7 +168,12 @@ export default function Board() {
     <group>
       <group ref={boardGroupRef} dispose={null}>
         {/* Edge */}
-        <mesh castShadow receiveShadow geometry={nodes.Edge.geometry} renderOrder={0}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Edge.geometry}
+          renderOrder={0}
+        >
           <meshStandardMaterial
             color={edgeColor}
             roughness={0.58}
@@ -180,26 +190,41 @@ export default function Board() {
             metalness={boardMetalness}
             envMapIntensity={1.25}
           />
-          {frontElements.map((el) => renderDecal(el, el.id === selectedId, "front"))}
+          {frontElements.map((el) => (
+            <Suspense fallback={null}>
+              {renderDecal(el, el.id === selectedId, "front")}
+            </Suspense>
+          ))}
         </mesh>
 
         {/* Front gizmos — only when front is active AND camera faces front */}
-        {showGizmos && activeSide === "front" &&
+        {showGizmos &&
+          activeSide === "front" &&
           frontElements.map((el) => renderGizmo(el, "front"))}
 
         {/* Back face */}
-        <mesh castShadow receiveShadow geometry={nodes.Back.geometry} renderOrder={0}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Back.geometry}
+          renderOrder={0}
+        >
           <meshStandardMaterial
             color={boardColor}
             roughness={boardRoughness}
             metalness={boardMetalness}
             envMapIntensity={1.25}
           />
-          {backElements.map((el) => renderDecal(el, el.id === selectedId, "back"))}
+          {backElements.map((el) => (
+            <Suspense fallback={null}>
+              {renderDecal(el, el.id === selectedId, "back")}
+            </Suspense>
+          ))}
         </mesh>
 
         {/* Back gizmos — only when back is active AND camera faces back */}
-        {showGizmos && activeSide === "back" &&
+        {showGizmos &&
+          activeSide === "back" &&
           backElements.map((el) => renderGizmo(el, "back"))}
       </group>
     </group>

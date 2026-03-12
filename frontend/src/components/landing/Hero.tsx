@@ -139,7 +139,7 @@ export default function Hero() {
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
-                to="/app"
+                to="/boards"
                 className="group relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--accent)] to-cyan-400 px-7 py-3 text-sm font-semibold text-[#04070d] shadow-[0_0_24px_rgba(125,211,252,0.25)] transition-all hover:shadow-[0_0_40px_rgba(125,211,252,0.4)]"
               >
                 Start Designing

@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import type { Board } from "../types/board";
+import { apiBoardToStoreState, storeToUpdatePayload } from "../utils/boardMapper";
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -44,6 +46,10 @@ export type Tool = "select" | "hand";
 export type MobilePanelTab = "layers" | "properties" | null;
 
 export interface DesignState {
+  // Board metadata (set when working on an API-persisted board)
+  boardId: string | null;
+  boardName: string | null;
+
   // Board
   board: BoardSettings;
   activeSide: Side;
@@ -62,6 +68,12 @@ export interface DesignState {
 
   // Screenshot
   screenshotRequested: boolean;
+
+  // Board metadata actions
+  setBoardMeta: (id: string | null, name: string | null) => void;
+  loadFromApiBoard: (board: Board) => void;
+  getUpdatePayload: () => import("../types/board").UpdateBoardPayload;
+  resetDesign: () => void;
 
   // Board actions
   setBoard: (partial: Partial<BoardSettings>) => void;
@@ -211,6 +223,8 @@ const defaultBoard: BoardSettings = {
 // ── Store ────────────────────────────────────────────────────────────
 
 export const useDesignStore = create<DesignState>((set, get) => ({
+  boardId: null,
+  boardName: null,
   board: { ...defaultBoard },
   activeSide: "front",
   elements: [],
@@ -222,6 +236,36 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   libraryTab: "stickers",
   mobilePanelTab: null,
   screenshotRequested: false,
+
+  // ── Board metadata ──
+  setBoardMeta: (id, name) => set({ boardId: id, boardName: name }),
+
+  loadFromApiBoard: (apiBoard) => {
+    const state = apiBoardToStoreState(apiBoard);
+    set({
+      boardId: apiBoard.id,
+      boardName: apiBoard.name,
+      board: state.board,
+      activeSide: state.activeSide,
+      elements: state.elements,
+      selectedId: null,
+    });
+  },
+
+  getUpdatePayload: () => {
+    const s = get();
+    return storeToUpdatePayload(s.elements, s.board);
+  },
+
+  resetDesign: () =>
+    set({
+      boardId: null,
+      boardName: null,
+      board: { ...defaultBoard },
+      activeSide: "front",
+      elements: [],
+      selectedId: null,
+    }),
 
   // ── Board ──
   setBoard: (partial) =>

@@ -20,7 +20,7 @@ export default function CallToAction() {
         </p>
         <div className="mt-8 flex flex-col items-center gap-3">
           <Link
-            to="/app"
+             to="/boards"
             className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--accent)] to-cyan-400 px-8 py-3.5 text-base font-semibold text-[#04070d] shadow-[0_0_32px_rgba(125,211,252,0.3)] transition-all hover:shadow-[0_0_48px_rgba(125,211,252,0.5)]"
           >
             Open Designer

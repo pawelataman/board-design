@@ -6,5 +6,16 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.135.1",
+    "loguru>=0.7.3",
     "pydantic>=2.12.5",
 ]
+
+[tool.fastapi]
+entry-point = "main:app"
+
+[tool.ruff]
+line-length = 88
+select = ["F"]
+
+[tool.ruff.lint]
+fixable = ["ALL"]

@@ -30,7 +30,7 @@ export default function Footer() {
           >
             How It Works
           </a>
-          <Link to="/app" className="transition-colors hover:text-white">
+           <Link to="/boards" className="transition-colors hover:text-white">
             Designer
           </Link>
         </div>

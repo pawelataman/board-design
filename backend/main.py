@@ -1,5 +1,16 @@
 from fastapi import FastAPI
-from modules.board.router import router as board_router
+from fastapi.middleware.cors import CORSMiddleware
+
+from modules.boards.router import router as board_router
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,  # ty:ignore[invalid-argument-type]
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(board_router)

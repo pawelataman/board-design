@@ -39,7 +39,7 @@ export default function Navbar() {
         </div>
 
         <Link
-          to="/app"
+          to="/boards"
           className="rounded-full bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur transition-all hover:bg-white/20"
         >
           Launch App
