@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { UserButton } from "@clerk/react";
+import { CaretLeft } from "@phosphor-icons/react";
 import Scene from "../components/canvas/Scene";
 import Toolbar from "../components/ui/Toolbar";
 import LayersPanel from "../components/ui/LayersPanel";
@@ -141,9 +142,7 @@ export default function Designer() {
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur transition-colors hover:bg-white/20 hover:text-white"
             title="Back to boards"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
+            <CaretLeft size={16} />
           </Link>
           {storeBoardId && (
             <span className="text-sm text-white/50">

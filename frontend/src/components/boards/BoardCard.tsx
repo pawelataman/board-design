@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Trash } from "@phosphor-icons/react";
 import type { Board } from "../../types/board";
 
 function formatDate(dateStr: string) {
@@ -53,22 +54,7 @@ export default function BoardCard({
             title="Delete board"
             className="shrink-0 rounded p-1 text-[var(--text-secondary)] opacity-0 transition-all hover:bg-[var(--danger)]/15 hover:text-[var(--danger)] group-hover:opacity-100"
           >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-              <path d="M10 11v6" />
-              <path d="M14 11v6" />
-              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-            </svg>
+            <Trash size={14} />
           </button>
         </div>
         <div className="flex items-center gap-3 text-xs text-[var(--text-secondary)]">

@@ -56,7 +56,7 @@ export default function TextDecal({
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = color;
-    ctx.shadowColor = "rgba(7,15,29,0.35)";
+    ctx.shadowColor = "rgba(7,15,29,0)";
     ctx.shadowBlur = 20;
     ctx.fillText(text.slice(0, 24), canvas.width / 2, canvas.height / 2 + 8);
 
@@ -76,7 +76,10 @@ export default function TextDecal({
     const topDecal = event.intersections.reduce<Object3D | null>(
       (best, hit) => {
         const obj = hit.eventObject;
-        if (obj.renderOrder > 0 && (!best || obj.renderOrder > best.renderOrder))
+        if (
+          obj.renderOrder > 0 &&
+          (!best || obj.renderOrder > best.renderOrder)
+        )
           return obj;
         return best;
       },

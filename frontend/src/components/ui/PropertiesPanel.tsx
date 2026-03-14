@@ -1,3 +1,4 @@
+import { Copy, Trash } from "@phosphor-icons/react";
 import { useDesignStore, type DesignElement } from "../../store/useDesignStore";
 
 function BoardProperties() {
@@ -79,18 +80,18 @@ function ElementProperties({ element }: { element: DesignElement }) {
           <button
             type="button"
             onClick={() => duplicateElement(element.id)}
-            className="rounded-lg px-2 py-1 text-xs text-[var(--text-secondary)] hover:bg-white/8 hover:text-[var(--text-primary)]"
+            className="flex items-center justify-center rounded-lg p-1.5 text-[var(--text-secondary)] transition-colors hover:bg-white/8 hover:text-[var(--text-primary)]"
             title="Duplicate"
           >
-            Dup
+            <Copy size={16} />
           </button>
           <button
             type="button"
             onClick={() => removeElement(element.id)}
-            className="rounded-lg px-2 py-1 text-xs text-[var(--danger)] hover:bg-[var(--danger)]/10"
+            className="flex items-center justify-center rounded-lg p-1.5 text-[var(--danger)] transition-colors hover:bg-[var(--danger)]/10"
             title="Delete"
           >
-            Del
+            <Trash size={16} />
           </button>
         </div>
       </div>
