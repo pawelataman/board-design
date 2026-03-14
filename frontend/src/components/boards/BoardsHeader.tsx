@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { UserButton } from "@clerk/react";
 
 const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
@@ -24,26 +25,37 @@ export default function BoardsHeader({
           </span>
         </Link>
 
-        <button
-          type="button"
-          onClick={onCreateClick}
-          className="flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-medium text-[var(--surface-0)] transition-opacity hover:opacity-90"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={onCreateClick}
+            className="flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-medium text-[var(--surface-0)] transition-opacity hover:opacity-90"
           >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          New Board
-        </button>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            New Board
+          </button>
+
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "h-8 w-8",
+              },
+            }}
+          />
+        </div>
       </div>
     </header>
   );

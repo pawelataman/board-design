@@ -27,7 +27,7 @@ export default function CallToAction() {
             <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5" />
           </Link>
           <span className="text-sm text-[var(--text-secondary)]">
-            No sign-up required
+            Free forever. Get started in seconds.
           </span>
         </div>
       </FadeInSection>

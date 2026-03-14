@@ -1,5 +1,6 @@
-import { useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useSearchParams, Link } from "react-router-dom";
+import { UserButton } from "@clerk/react";
 import Scene from "../components/canvas/Scene";
 import Toolbar from "../components/ui/Toolbar";
 import LayersPanel from "../components/ui/LayersPanel";
@@ -7,7 +8,7 @@ import PropertiesPanel from "../components/ui/PropertiesPanel";
 import LibraryPopover from "../components/ui/LibraryPopover";
 import MobileTabBar from "../components/ui/MobileTabBar";
 import { decodeSharedDesign, useDesignStore } from "../store/useDesignStore";
-import { useBoard, useUpdateBoard } from "../api/boards";
+import { useBoard } from "../api/boards";
 
 export default function Designer() {
   const [searchParams] = useSearchParams();
@@ -17,7 +18,6 @@ export default function Designer() {
   const storeBoardId = useDesignStore((s) => s.boardId);
 
   const { data: apiBoard, isLoading, isError } = useBoard(boardId ?? "");
-  const updateBoardMutation = useUpdateBoard();
 
   // Track whether we've already hydrated from the API to avoid re-hydrating
   const hydratedRef = useRef<string | null>(null);
@@ -58,13 +58,7 @@ export default function Designer() {
     useDesignStore.getState().loadFromLocal();
   }, [boardId, searchParams]);
 
-  // ── Auto-save callback ──
-  const saveToApi = useCallback(() => {
-    const state = useDesignStore.getState();
-    if (!state.boardId) return;
-    const payload = state.getUpdatePayload();
-    updateBoardMutation.mutate({ id: state.boardId, payload });
-  }, [updateBoardMutation]);
+  // ── Auto-save: currently disabled (see commented block below) ──
 
   // // ── Auto-save: debounced subscription to store changes ──
   // useEffect(() => {
@@ -138,17 +132,37 @@ export default function Designer() {
       {/* Full-bleed 3D canvas */}
       <Scene />
 
-      {/* Board name indicator (when editing an API board) */}
-      {storeBoardId && (
-        <div className="absolute left-1/2 top-0 z-20 -translate-x-1/2 px-3 py-1">
-          <span className="text-xs text-white/40">
-            {useDesignStore.getState().boardName ?? "Untitled"}
-          </span>
-        </div>
-      )}
-
       {/* Floating UI panels */}
       <div className="pointer-events-none absolute inset-0 z-10">
+        {/* Top-left: back to boards + board name */}
+        <div className="pointer-events-auto absolute left-4 top-4 flex items-center gap-3">
+          <Link
+            to="/boards"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur transition-colors hover:bg-white/20 hover:text-white"
+            title="Back to boards"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </Link>
+          {storeBoardId && (
+            <span className="text-sm text-white/50">
+              {useDesignStore.getState().boardName ?? "Untitled"}
+            </span>
+          )}
+        </div>
+
+        {/* Top-right: user button */}
+        <div className="pointer-events-auto absolute right-4 top-4">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "h-9 w-9",
+              },
+            }}
+          />
+        </div>
+
         {/* Top toolbar — centered */}
         <div className="pointer-events-auto absolute left-1/2 top-4 -translate-x-1/2">
           <Toolbar />

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/react";
 
 const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
@@ -38,12 +39,42 @@ export default function Navbar() {
           </a>
         </div>
 
-        <Link
-          to="/boards"
-          className="rounded-full bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur transition-all hover:bg-white/20"
-        >
-          Launch App
-        </Link>
+        <div className="flex items-center gap-3">
+          <Show when="signed-out">
+            <SignInButton mode="redirect">
+              <button
+                type="button"
+                className="rounded-full px-5 py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-white"
+              >
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton mode="redirect">
+              <button
+                type="button"
+                className="rounded-full bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur transition-all hover:bg-white/20"
+              >
+                Get Started
+              </button>
+            </SignUpButton>
+          </Show>
+
+          <Show when="signed-in">
+            <Link
+              to="/boards"
+              className="rounded-full bg-white/10 px-5 py-2 text-sm font-medium text-white backdrop-blur transition-all hover:bg-white/20"
+            >
+              My Boards
+            </Link>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "h-8 w-8",
+                },
+              }}
+            />
+          </Show>
+        </div>
       </div>
     </nav>
   );

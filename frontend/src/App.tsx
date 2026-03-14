@@ -1,10 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const Designer = lazy(() => import("./pages/Designer"));
 const BoardsPage = lazy(() => import("./pages/BoardsPage"));
+const SignInPage = lazy(() => import("./pages/SignInPage"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -32,9 +35,29 @@ export default function App() {
           }
         >
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
-            <Route path="/boards" element={<BoardsPage />} />
-            <Route path="/app" element={<Designer />} />
+            <Route path="/sign-in/*" element={<SignInPage />} />
+            <Route path="/sign-up/*" element={<SignUpPage />} />
+
+            {/* Protected routes */}
+            <Route
+              path="/boards"
+              element={
+                <ProtectedRoute>
+                  <BoardsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <Designer />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

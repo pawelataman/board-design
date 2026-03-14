@@ -134,7 +134,7 @@ export default function Hero() {
             <p className="max-w-lg text-lg leading-relaxed text-[var(--text-secondary)]">
               The first browser-based 3D snowboard customizer. Place stickers,
               add text, upload graphics — see it all live on a realistic 3D
-              model. No downloads, no accounts, no friction.
+              model. Free to use, instant setup.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -147,7 +147,7 @@ export default function Hero() {
               </Link>
 
               <span className="text-sm text-[var(--text-secondary)]">
-                Free forever. No sign-up.
+                Free forever. Takes 30 seconds.
               </span>
             </div>
           </div>
