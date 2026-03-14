@@ -1,27 +1,42 @@
-from clerk_backend_api import Clerk
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from clerk_backend_api import Clerk, User
+from clerk_backend_api.security import RequestState
+from clerk_backend_api.security.types import AuthenticateRequestOptions
+from fastapi import HTTPException, Request, status
 from loguru import logger
 
-sdk = Clerk()
-oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
+from core.settings import get_settings
+
+settings = get_settings()
+
+sdk = Clerk(settings.clerk_secret_key)
 
 
-async def basic_auth(token: str = Depends(oauth_scheme)):
-    logger.info("Authenticating request")
-    logger.info(f"Token received: {token}")
-    if token is None:
-        logger.warning("Missing or invalid Authorization header")
+async def require_auth(request: Request) -> str:
+    """Verify Clerk session token and return the user_id."""
+    state: RequestState = sdk.authenticate_request(
+        request,
+        AuthenticateRequestOptions(),
+    )
+    if not state.is_signed_in:
+        logger.warning(f"Auth failed: {state.reason} — {state.message}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing or invalid Authorization header",
+            detail=state.message or "Unauthenticated",
         )
+
+    user_id: str = state.payload["sub"]  # ty:ignore[not-subscriptable]
+    logger.info(f"Authenticated user_id: {user_id}")
+    return user_id
+
+
+async def get_user_info(user_id: str) -> User:
+    """Fetch user info from Clerk."""
     try:
-        session = await sdk.verify_token(token)
-        logger.info(f"Authenticated user: {session.user_id}")
+        user: User = await sdk.users.get_async(user_id=user_id)
+        return user
     except Exception as e:
-        logger.warning(f"Token verification failed: {e}")
+        logger.error(f"Failed to fetch user info for user_id: {user_id} — {e}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch user info",
         )
