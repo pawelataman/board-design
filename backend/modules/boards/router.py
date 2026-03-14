@@ -3,16 +3,21 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 
+from core.auth import basic_auth
+
 from .boards_service import BoardsService, get_boards_service
 from .schemas import Board, CreateBoard, UpdateBoard
 
 router = APIRouter(prefix="/boards", tags=["board"])
 
 BoardsServiceDep = Annotated[BoardsService, Depends(get_boards_service)]
+BasicAuthDep = Annotated[None, Depends(basic_auth)]
 
 
 @router.get("/")
-async def get_boards(service: BoardsServiceDep) -> list[Board]:
+async def get_boards(
+    service: BoardsServiceDep, basic_auth: BasicAuthDep
+) -> list[Board]:
     boards = service.get_boards()
     return boards
 

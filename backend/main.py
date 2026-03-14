@@ -1,9 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
 
+from core.settings import get_settings
 from modules.boards.router import router as board_router
 
-app = FastAPI()
+settings = get_settings()
+
+
+def lifespan(app: FastAPI):
+    logger.info("Starting up the application...")
+    yield
+    logger.info("Shutting down the application...")
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,  # ty:ignore[invalid-argument-type]
