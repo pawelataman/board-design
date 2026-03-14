@@ -9,9 +9,7 @@ from core.auth import require_auth
 from .boards_service import BoardsService, get_boards_service
 from .schemas import Board, CreateBoard, UpdateBoard
 
-router = APIRouter(
-    prefix="/boards", tags=["board"], dependencies=[Depends(require_auth)]
-)
+router = APIRouter(prefix="/boards", tags=["board"])
 
 BoardsServiceDep = Annotated[BoardsService, Depends(get_boards_service)]
 UserId = Annotated[str, Depends(require_auth)]
@@ -29,6 +27,7 @@ async def get_boards(
 
 @router.get("/{board_id}")
 async def get_board_by_id(
+    user_id: UserId,
     board_id: Annotated[uuid.UUID, Path(description="The uuid ID of the board")],
     service: BoardsServiceDep,
 ) -> Board:
@@ -43,6 +42,7 @@ async def get_board_by_id(
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_board(
+    user_id: UserId,
     board_data: CreateBoard,
     service: BoardsServiceDep,
 ) -> Board:
@@ -52,6 +52,7 @@ async def create_board(
 
 @router.put("/{board_id}")
 async def update_board(
+    user_id: UserId,
     board_id: Annotated[uuid.UUID, Path(description="The uuid ID of the board")],
     update_data: UpdateBoard,
     service: BoardsServiceDep,
@@ -67,6 +68,7 @@ async def update_board(
 
 @router.delete("/{board_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_board(
+    user_id: UserId,
     board_id: Annotated[uuid.UUID, Path(description="The uuid ID of the board")],
     service: BoardsServiceDep,
 ):
